@@ -1,0 +1,56 @@
+[{
+	"baseUrl": "https://www.porn-star.com/%s.html",
+	"range": {
+		"value": "a",
+		"separator": "",
+		"stepSize": 1,
+		"start": 0
+	},
+	"writeSQL": true,
+	"sql": {
+		"database": "scrape-images",
+		"user": "moritz",
+		"password": "Lateman47,43,s54",
+		"host": "localhost",
+		"port": 5432
+	},
+	"async": true,
+	"parsingSchema": [{
+		"cssSelector": ".columns ul li a[title]:not([rel])",
+		"name": "url",
+		"selectOne": false,
+		"dontInsert": true,
+		"startCall": "getSubpage",
+		"async": true,
+		"carryOver": [{
+			"name": "attribute::href",
+			"as": "url"
+		}]
+	}],
+	"subroutines": {
+		"getSubpage": {
+			"parsingSchema": [{
+				"cssSelector": ".thumbnails-videos a",
+				"name": "videos",
+				"selectOne": false,
+				"dontInsert": false,
+				"saveToFile": {
+					"url": "attribute::href",
+					"folder": "F:/Projects/The Collector/downloads",
+					"applyOperations": [{
+						"type": "File::hash_xhash128"
+					}]
+				},
+				"insertWith": {
+					"table": "test_table",
+					"column": "videos",
+					"insertCombine": "insertion_1",
+					"value": {
+						"getFrom": "_self",
+						"name": "attribute::href"
+					}
+				}
+			}]
+		}
+	}
+}]

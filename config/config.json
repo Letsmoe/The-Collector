@@ -1,0 +1,226 @@
+[{
+	"baseUrl": "https://www.porn-star.com/%s.html",
+	"range": {
+		"value": "a",
+		"separator": "",
+		"stepSize": 1,
+		"start": 0
+	},
+	"writeSQL": true,
+	"sql": {
+		"database": "scrape-images",
+		"user": "moritz",
+		"password": "Lateman47,43,s54",
+		"host": "localhost",
+		"port": 5432
+	},
+	"async": true,
+	"parsingSchema": [{
+		"cssSelector": ".columns ul li a[title]:not([rel])",
+		"name": "url",
+		"selectOne": false,
+		"dontInsert": true,
+		"startCall": "getSubpage",
+		"async": true,
+		"carryOver": [{
+			"name": "attribute::href",
+			"as": "url"
+		}]
+	}],
+	"subroutines": {
+		"getSubpage": {
+			"parsingSchema": [{
+					"cssSelector": ".thumbnails-videos a",
+					"name": "videos",
+					"selectOne": false,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "test_table",
+						"column": "videos",
+						"insertCombine": "insertion_1",
+						"value": {
+							"getFrom": "_self",
+							"name": "attribute::href"
+						}
+					}
+				},
+				{
+					"cssSelector": ".slim h2 a",
+					"name": "twitter",
+					"selectOne": false,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "test_table",
+						"column": "twitter",
+						"insertCombine": "insertion_1",
+						"value": {
+							"getFrom": "_self",
+							"name": "attribute::href"
+						}
+					}
+				},
+				{
+					"cssSelector": ".thumbnails-pictures a",
+					"name": "galleries",
+					"selectOne": false,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "test_table",
+						"column": "galleries",
+						"insertCombine": "insertion_1",
+						"value": {
+							"getFrom": "_self",
+							"name": "attribute::href"
+						}
+					}
+				},
+				{
+					"cssSelector": ".slim:last-of-type h2",
+					"name": "name",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "test_table",
+						"column": "name",
+						"insertCombine": "insertion_1",
+						"applyOperations": [{
+							"type": "String::groupRegExp",
+							"value": "(.*?) biography"
+						}],
+						"value": {
+							"getFrom": "_self",
+							"name": "method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": ".slim:last-of-type ul li:nth-child(1)",
+					"name": "birthday",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "test_table",
+						"column": "birthday",
+						"insertCombine": "insertion_1",
+						"applyOperations": [{
+							"type": "String::groupRegExp",
+							"value": "^.*?: (.*)"
+						}],
+						"value": {
+							"getFrom": "_self",
+							"name": "method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": ".full-width .wrapper .columns ul li a",
+					"name": "backlinks",
+					"selectOne": false,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "test_table",
+						"column": "backlinks",
+						"insertCombine": "insertion_1",
+						"value": {
+							"getFrom": "_self",
+							"name": "attribute::href"
+						}
+					}
+				},
+				{
+					"cssSelector": ".slim:last-of-type ul li:nth-child(2)",
+					"name": "place_of_birth",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "test_table",
+						"column": "place_of_birth",
+						"insertCombine": "insertion_1",
+						"applyOperations": [{
+							"type": "String::groupRegExp",
+							"value": "^.*?: (.*)"
+						}],
+						"value": {
+							"getFrom": "_self",
+							"name": "method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": ".slim:last-of-type ul li:nth-child(3)",
+					"name": "height",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "test_table",
+						"column": "height",
+						"insertCombine": "insertion_1",
+						"applyOperations": [{
+							"type": "String::groupRegExp",
+							"value": "^.*?: \\((.*)\\)"
+						}],
+						"value": {
+							"getFrom": "_self",
+							"name": "method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": ".slim:last-of-type ul li:nth-child(4)",
+					"name": "weight",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "test_table",
+						"column": "weight",
+						"insertCombine": "insertion_1",
+						"applyOperations": [{
+							"type": "String::groupRegExp",
+							"value": "^.*?: \\((.*)\\)"
+						}],
+						"value": {
+							"getFrom": "_self",
+							"name": "method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": ".slim:last-of-type ul li:nth-child(5)",
+					"name": "stats",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "test_table",
+						"column": "stats",
+						"insertCombine": "insertion_1",
+						"applyOperations": [{
+							"type": "String::groupRegExp",
+							"value": "^.*?: (.*)"
+						}],
+						"value": {
+							"getFrom": "_self",
+							"name": "method::text"
+						}
+					}
+				}
+			]
+		},
+		"getImageGallery": {
+			"parsingSchema": [{
+				"cssSelector": ".thumbnails-gallery a img",
+				"constructPath": [{
+						"referentOf": "_self",
+						"name": "href"
+					},
+					{
+						"referentOf": "attribute",
+						"name": "src"
+					}
+				],
+				"name": "image_gallery",
+				"selectOne": false,
+				"dontInsert": true
+			}]
+		}
+	}
+}]
