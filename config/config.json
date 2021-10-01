@@ -14,14 +14,14 @@
 		"host": "localhost",
 		"port": 5432
 	},
-	"async": true,
+	"async": false,
 	"parsingSchema": [{
 		"cssSelector": ".columns ul li a[title]:not([rel])",
 		"name": "url",
 		"selectOne": false,
 		"dontInsert": true,
 		"startCall": "getSubpage",
-		"async": true,
+		"async": false,
 		"carryOver": [{
 			"name": "attribute::href",
 			"as": "url"

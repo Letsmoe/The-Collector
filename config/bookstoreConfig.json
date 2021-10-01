@@ -1,0 +1,165 @@
+[{
+	"baseUrl": "http://books.toscrape.com/catalogue/category/books_1/page-%s.html",
+	"range": {
+		"value": 51,
+		"separator": "",
+		"stepSize": 1,
+		"start": 0
+	},
+	"writeSQL": true,
+	"sql": {
+		"database": "scrape-images",
+		"user": "moritz",
+		"password": "Lateman47,43,s54",
+		"host": "localhost",
+		"port": 5432
+	},
+	"async": false,
+	"parsingSchema": [{
+		"cssSelector": ".product_pod .image_container a",
+		"name": "url",
+		"selectOne": false,
+		"dontInsert": true,
+		"startCall": "getSubpage",
+		"async": false,
+		"carryOver": [{
+			"name": "_self::attribute::href",
+			"as": "url"
+		}]
+	}],
+	"subroutines": {
+		"getSubpage": {
+			"parsingSchema": [{
+					"cssSelector": ".product_main h1",
+					"name": "title",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "books",
+						"column": "title",
+						"insertCombine": "insertion_1",
+						"value": {
+							"name": "_self::method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": ".product_main .price_color",
+					"name": "price",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "books",
+						"column": "price",
+						"insertCombine": "insertion_1",
+						"value": {
+							"name": "_self::method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": ".thumbnails-pictures a",
+					"name": "availability",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "books",
+						"column": "availability",
+						"insertCombine": "insertion_1",
+						"value": {
+							"name": "_self::method::text",
+							"applyOperations": [{
+								"type": "String::groupRegExp",
+								"value": "(\\d+)"
+							}]
+						}
+					}
+				},
+				{
+					"cssSelector": "#product_description + p",
+					"name": "description",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "books",
+						"column": "description",
+						"insertCombine": "insertion_1",
+						"value": {
+							"name": "_self::method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": "table.table tbody tr:nth-child(1) td",
+					"name": "upc",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "books",
+						"column": "upc",
+						"insertCombine": "insertion_1",
+						"value": {
+							"name": "_self::method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": "table.table tbody tr:nth-child(2) td",
+					"name": "type",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "books",
+						"column": "type",
+						"insertCombine": "insertion_1",
+						"value": {
+							"name": "_self::method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": "table.table tbody tr:nth-child(5) td",
+					"name": "tax",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "books",
+						"column": "tax",
+						"insertCombine": "insertion_1",
+						"value": {
+							"name": "_self::method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": "table.table tbody tr:nth-child(7) td",
+					"name": "review_count",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "books",
+						"column": "review_count",
+						"insertCombine": "insertion_1",
+						"value": {
+							"schema": "_self::method::text"
+						}
+					}
+				},
+				{
+					"cssSelector": ".product_gallery .thumbnail .carousel-inner .item img",
+					"name": "image",
+					"selectOne": true,
+					"dontInsert": false,
+					"insertWith": {
+						"table": "books",
+						"column": "image",
+						"insertCombine": "insertion_1",
+						"value": {
+							"name": "_self::attribute::src"
+						}
+					}
+				}
+			]
+		}
+	}
+}]
