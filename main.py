@@ -4,9 +4,10 @@ from requests_futures.sessions import FuturesSession
 from bs4 import BeautifulSoup
 import requests
 import random
+import os
+import re
 # --------------------------- Import local packages -------------------------- #
 from connection import getConnectionConfig
-from __selectionManipulation import *
 from urllib.parse import urljoin
 
 
